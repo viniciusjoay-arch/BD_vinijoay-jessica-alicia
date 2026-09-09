@@ -1,0 +1,21 @@
+name: entrega
+
+on: [push]
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: conferir os arquivos entregues
+        run: |
+          set +e
+          python conferir.py | tee /tmp/saida.txt
+          codigo=${PIPESTATUS[0]}
+          cat /tmp/saida.txt >> "$GITHUB_STEP_SUMMARY"
+          exit $codigo
