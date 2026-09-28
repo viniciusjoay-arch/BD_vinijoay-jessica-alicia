@@ -2,8 +2,8 @@
 
 **Integrantes:**
     Vinicius Henrique Joay
-    JESSICA ALBO TREVISAN DE SOUZA
-    ALICIA HARUMI LACOVIC SAKAI
+    Jessica Albo Trevisan de Souza
+    Alicia Harumi Lacovic Sakai
 **Turma:**
     1C Des. Sistemas
 ---
