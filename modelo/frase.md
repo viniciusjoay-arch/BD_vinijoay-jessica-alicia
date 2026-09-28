@@ -10,7 +10,7 @@
 
 ## Em uma frase
 
-> 
+> _O sistema precisa guardar informaçoes sobre cliente, pratos e pedidos realizados no restaurante
 >
 > 
 
