@@ -26,7 +26,10 @@ de um. Liste aqui, um por linha, com dois ou três atributos de cada:
 
 ## O N:N com atributo próprio
 
-Qual é o par de entidades que se cruza muitos-para-muitos, e qual dado nasce
-**do encontro** entre elas (e não de nenhum dos dois lados)?
+-Pedido — Prato
 
--
+o dado que nasce do encosntro é "ItenPedido" 
+                                quantidade
+                                preçoUnitario
+                                subtota
+
