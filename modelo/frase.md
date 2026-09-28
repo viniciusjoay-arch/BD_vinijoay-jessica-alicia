@@ -31,5 +31,5 @@ de um. Liste aqui, um por linha, com dois ou três atributos de cada:
 o dado que nasce do encosntro é "ItenPedido" 
                                 quantidade
                                 preçoUnitario
-                                subtota
+                                subtotal
 
