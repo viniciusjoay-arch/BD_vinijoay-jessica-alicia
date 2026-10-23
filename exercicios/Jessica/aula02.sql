@@ -76,3 +76,33 @@ DROP TABLE RASCUNHO;
 
 
 -- ex6
+CREATE TABLE LIVRO (
+    id INTEGER PRIMARY KEY,
+    titulo TEXT NOT NULL
+);
+
+CREATE TABLE LEITOR (
+    id INTEGER PRIMARY KEY,
+    nome TEXT NOT NULL
+);
+
+CREATE TABLE EMPRESTIMO (
+    id_leitor INTEGER NOT NULL,
+    id_livro INTEGER NOT NULL,
+    data_saida DATE NOT NULL,
+    data_volta DATE,
+    PRIMARY KEY (id_leitor, id_livro, data_saida),
+    FOREIGN KEY (id_leitor) REFERENCES LEITOR(id),
+    FOREIGN KEY (id_livro) REFERENCES LIVRO(id)
+);
+
+INSERT INTO LIVRO (id, titulo) VALUES (1, '1984');
+INSERT INTO LEITOR (id, nome) VALUES (1, 'Lucas Lima');
+
+
+INSERT INTO EMPRESTIMO (id_leitor, id_livro, data_saida, data_volta) 
+VALUES (1, 1, '2026-10-20', '2026-10-22');
+
+
+INSERT INTO EMPRESTIMO (id_leitor, id_livro, data_saida, data_volta) 
+VALUES (1, 1, '2026-10-23', NULL);
