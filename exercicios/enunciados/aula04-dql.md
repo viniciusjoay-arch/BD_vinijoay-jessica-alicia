@@ -1,80 +1,139 @@
-# Aula 04 — Agora a gente pergunta pro banco
+# Aula 04: O banco responde
 
 **Arquivo de resposta:** `exercicios/<seu-nome>/aula04.sql`
 
 Cada exercício abaixo começa um bloco novo no seu arquivo, marcado com
 `-- ex1`, `-- ex2`, e assim por diante.
 
-Os blocos rodam sobre o **banco da secretaria já carregado** — `TURMA`, `ALUNO`,
-`MODALIDADE`, `INSCRICAO`, os mesmos dados da aula passada. Você não vai mudar
-nada hoje, só perguntar. `SELECT` não mexe no banco: ele lê e devolve uma
+Hoje os blocos rodam sobre o **banco da secretaria já carregado** (`TURMA`,
+`ALUNO`, `MODALIDADE`, `INSCRICAO`), os mesmos dados da aula passada. Não crie
+tabela, não insira dado, não altere registro. `SELECT` só lê e devolve uma
 tabela de resposta.
+
+**Regra do arquivo:** antes de cada `SELECT`, escreva a pergunta em português,
+em comentário. Exemplo:
+
+```sql
+-- ex3
+-- Pergunta: quais alunos estão sem turma?
+SELECT nome FROM ALUNO WHERE id_turma IS NULL;
+```
 
 ---
 
 ## O estrago do dia
 
-Você quer a lista de todos os alunos que **não** são da turma 1. Escreve o
-óbvio:
+A coordenação pergunta: "quais alunos estão sem turma?". Alguém escreve:
 
 ```sql
-SELECT nome FROM ALUNO WHERE id_turma != 1;
+SELECT * FROM ALUNO WHERE id_turma = 0;
 ```
 
-E a lista volta errada. O João Vitor, que está **sem turma**, não aparece. Mas
-ele claramente não é da turma 1, então deveria estar na lista.
+O banco executa. Nenhum erro, nenhum aviso. A resposta vem vazia, e quem
+olha pensa: "ótimo, ninguém está sem turma".
 
-O motivo é a coisa mais escorregadia do SQL inteiro: o `id_turma` do João Vitor
-é `NULL`, e `NULL` não é igual a nada nem diferente de nada. Não é `!= 1`, não é
-`= 1`. É "não sei". E o banco, quando não sabe, deixa a linha de fora.
+Só que tem aluno sem turma. No banco, "sem turma" não é o número zero. É
+`NULL`, que quer dizer "não há valor registrado".
 
 ```sql
-SELECT nome FROM ALUNO WHERE id_turma != 1;   -- NÃO traz quem está sem turma
-SELECT nome FROM ALUNO WHERE id_turma IS NULL; -- é assim que se pergunta por vazio
+SELECT * FROM ALUNO WHERE id_turma = 0;       -- roda, devolve vazio, está errada
+SELECT * FROM ALUNO WHERE id_turma IS NULL;   -- a pergunta certa
 ```
 
-⚠️ Para `NULL` não se usa `=` nem `!=`. Usa-se `IS NULL` e `IS NOT NULL`. Quem
-esquece isso entrega relatório com gente faltando e não percebe, porque a
-consulta roda normal.
+⚠️ A consulta rodou e respondeu **outra pergunta**. Esse é o erro mais caro do
+SQL, porque ninguém desconfia dele. Hoje o jogo é esse: antes de escrever, diga
+em português o que a consulta precisa responder. Depois de rodar, confira se o
+número de linhas faz sentido.
 
 ---
 
-### ex1 — a lista simples
+### ex1: escolher colunas
 
-Traga só o `nome` e o `nascimento` de todos os alunos. Nada de `SELECT *`:
-escolha as colunas.
+Mostre apenas o `nome` e o `nascimento` dos alunos. Nada de `SELECT *`.
 
-### ex2 — o filtro
+### ex2: filtrar linhas
 
-Traga o `nome` dos alunos da turma 1. Antes de rodar, diga para você mesmo
-quantas linhas espera. Depois confira.
+Liste o nome dos alunos da turma de `id` 1. Depois, em outra consulta, liste
+as inscrições cuja `situacao` é `ativa`.
 
-### ex3 — o filtro por texto
+### ex3: procurar o que não existe
 
-Traga as inscrições com `situacao` igual a `ativa`. Conte quantas linhas
-voltaram e anote o número em comentário.
+Liste os alunos sem turma, usando a forma correta de testar `NULL`. Depois
+deixe, em comentário, a consulta errada com `= NULL` e explique por que ela não
+responde à pergunta.
 
-### ex4 — o vazio
+### ex4: duas condições
 
-Traga o `nome` dos alunos que estão **sem turma**. Depois rode a versão com
-`id_turma != 1`, olhe a diferença, e escreva em comentário por que os alunos sem
-turma não aparecem nela.
+Liste as inscrições ativas da modalidade 2. Depois faça uma segunda consulta
+que mostre os alunos das turmas 1 ou 2 usando `IN`.
 
-### ex5 — duas condições
+### ex5: texto e intervalo
 
-Traga os alunos da turma 2 que nasceram a partir de 2009. Use `AND`. Depois
-troque por `OR` e, em comentário, explique com suas palavras por que o `OR`
-devolve muito mais gente.
+Liste os alunos cujo nome começa com a letra `A`. Depois liste as inscrições
+realizadas entre `2026-05-01` e `2026-05-31`.
 
-### ex6 — (Desafio) a consulta que mente
+Antes de rodar a segunda, escreva em comentário quantas linhas você espera.
+Depois confira o que voltou e anote se bateu.
 
-Esta consulta roda sem erro e responde a pergunta errada:
+### ex6: ordenar e limitar
+
+Mostre os alunos em ordem alfabética. Em outra consulta, mostre as três
+primeiras linhas depois de ordenar pelo nome.
+
+### ex7: consultas que parecem certas
+
+Corrija as três consultas abaixo. Deixe a versão errada em comentário, escreva a
+versão corrigida embaixo e diga, em comentário, qual era o erro lógico de cada
+uma.
 
 ```sql
-SELECT nome FROM ALUNO WHERE id_turma = 1 OR id_turma = 2 AND id_turma IS NOT NULL;
+-- a) alunos sem turma
+SELECT nome FROM ALUNO WHERE id_turma = 0;
+
+-- b) nomes que começam com Ana
+SELECT nome FROM ALUNO WHERE nome = 'Ana%';
+
+-- c) inscrições ativas ou trancadas da modalidade 2
+SELECT * FROM INSCRICAO
+WHERE situacao = 'ativa'
+   OR situacao = 'trancada'
+  AND id_modalidade = 2;
 ```
 
-A intenção era: alunos da turma 1 ou da turma 2. Rode, veja o resultado, e
-descubra o que o banco entendeu de verdade. Escreva em comentário qual foi o
-engano e a versão corrigida. Dica: o banco resolve `AND` antes de `OR`, e
-parênteses existem por causa disso.
+### ex8: ler uma consulta
+
+Para cada consulta abaixo, escreva em português a pergunta que ela responde e
+diga quantas linhas você espera encontrar **antes** de executar. Depois execute
+e anote se acertou.
+
+```sql
+SELECT nome FROM ALUNO WHERE id_turma IS NULL;
+SELECT nome FROM ALUNO WHERE nome LIKE '%Silva%' ORDER BY nome;
+SELECT * FROM INSCRICAO
+WHERE situacao = 'ativa' AND data >= '2026-09-01';
+```
+
+### ex9: (Desafio) perguntas do caso do trio
+
+Escreva três perguntas reais sobre o domínio do projeto de vocês e transforme
+cada uma em um `SELECT`. Pelo menos uma deve usar `IS NULL`, `LIKE`, `IN` ou
+`BETWEEN`, e pelo menos uma deve usar `ORDER BY`.
+
+Como o `aula04.sql` roda no banco da secretaria e as tabelas do trio não
+existem lá, deixe as três perguntas e as três consultas **em comentário** no
+`aula04.sql`. As consultas de verdade vão para o `projeto/03-consultas.sql`,
+pelo dono do arquivo.
+
+---
+
+## Entrega
+
+```
+git pull
+git add exercicios/seunome/aula04.sql
+git commit -m "aula04 - exercicios de DQL"
+git push
+```
+
+Depois do push, confira a aba `Actions`. **Rodou** quer dizer que o SQL
+executou. Não quer dizer que a consulta respondeu a pergunta certa.
